@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login With Literally Everything</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #f6f7fb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .login-card {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    .login-title {
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .provider-btn {
+      border-radius: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      transition: all 0.15s ease;
+    }
+
+    .provider-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .provider-icon {
+      width: 22px;
+      text-align: center;
+    }
+
+    .footer-note {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <h1 class="login-title mb-2">Login With Everything</h1>
+  <p class="text-muted mb-4">
+    We couldn't decide which login providers to support, so we chose all of them.
+  </p>
+
+  <div class="row g-2" id="providerGrid"></div>
+
+  <div class="footer-note text-center">
+    This page definitely does not store your data. It just thinks about it.
+  </div>
+  <span style="font-size: 10px; color: gray;">Created by <a href="https://chippytime.com">chippytime.com</a></span>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">
+          Abort Mission
+        </button>
+        <button class="btn btn-primary rounded-pill">
+          I Accept My Fate
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const providers = [
+  // === REAL / COMMON ===
+  { name: "Google", icon: "fa-google", style: "fa-brands", text: "Google already knows who you are. This just makes it official." },
+  { name: "Microsoft", icon: "fa-microsoft", style: "fa-brands", text: "This login will be deprecated and reintroduced under a new name next year." },
+  { name: "Apple", icon: "fa-apple", style: "fa-brands", text: "Your identity will be minimal, private, and slightly smug." },
+  { name: "GitHub", icon: "fa-github", style: "fa-brands", text: "Your commits will be judged silently." },
+  { name: "GitLab", icon: "fa-gitlab", style: "fa-brands", text: "CI is running. Please wait 47 minutes." },
+  { name: "Facebook", icon: "fa-facebook", style: "fa-brands", text: "We will suggest this app to people you blocked in 2012." },
+  { name: "Twitter / X", icon: "fa-x-twitter", style: "fa-brands", text: "Your account may be rate-limited mid-login." },
+  { name: "LinkedIn", icon: "fa-linkedin", style: "fa-brands", text: "Congratulations on your exciting new opportunity to log in." },
+
+  // === DEV / TECH ===
+  { name: "Docker Hub", icon: "fa-docker", style: "fa-brands", text: "Pulling login image… 6.8GB remaining." },
+  { name: "NPM", icon: "fa-npm", style: "fa-brands", text: "Installing 412 dependencies to authenticate." },
+  { name: "Stack Overflow", icon: "fa-stack-overflow", style: "fa-brands", text: "Your login was closed as a duplicate." },
+  { name: "Hugging Face", icon: "fa-robot", style: "fa-solid", text: "An AI model looked at you and said “nice.”" },
+  { name: "OpenAI", icon: "fa-brain", style: "fa-solid", text: "We will remember this conversation forever. Probably." },
+  { name: "Linux", icon: "fa-linux", style: "fa-brands", text: "Please authenticate using sudo." },
+  { name: "Arch Linux (btw)", icon: "fa-terminal", style: "fa-solid", text: "You already told someone you use this." },
+  { name: "Vim", icon: "fa-keyboard", style: "fa-solid", text: "You are logged in. Press :q to leave. Just kidding." },
+
+  // === PRODUCTIVITY / APPS ===
+  { name: "Notion", icon: "fa-note-sticky", style: "fa-solid", text: "Your login will be saved in a workspace you’ll abandon." },
+  { name: "Slack", icon: "fa-slack", style: "fa-brands", text: "You have 4,912 unread messages." },
+  { name: "Discord", icon: "fa-discord", style: "fa-brands", text: "Your mic is on. Everyone heard that." },
+  { name: "Spotify", icon: "fa-spotify", style: "fa-brands", text: "We learned more about you from your playlists than this login." },
+
+  // === CMS / WEB ===
+  { name: "WordPress", icon: "fa-wordpress", style: "fa-brands", text: "Logging in with a site you forgot to update." },
+  { name: "Wix", icon: "fa-wix", style: "fa-brands", text: "This login will be centered slightly wrong." },
+  { name: "Squarespace", icon: "fa-border-all", style: "fa-solid", text: "Everything will look beautiful. Including your credentials." },
+  { name: "Shopify", icon: "fa-shopify", style: "fa-brands", text: "This login will try to upsell you something." },
+
+  // === SMART / IOT ===
+  { name: "Home Assistant", icon: "fa-house", style: "fa-solid", text: "Your lights blinked. Authentication acknowledged." },
+  { name: "Smart Fridge", icon: "fa-snowflake", style: "fa-solid", text: "Your fridge knows what you did last night." },
+  { name: "Your Router", icon: "fa-wifi", style: "fa-solid", text: "Please unplug and replug yourself." },
+
+  // === ABSURD / NEAL.FUN ENERGY ===
+  { name: "Your Email Inbox", icon: "fa-envelope-open", style: "fa-solid", text: "You have 12,483 unread messages. None are this." },
+  { name: "Your Password Manager’s Password", icon: "fa-unlock", style: "fa-solid", text: "This feels circular." },
+  { name: "Browser History", icon: "fa-eye", style: "fa-solid", text: "We promise not to scroll. Much." },
+  { name: "The Cloud (Actual)", icon: "fa-cloud", style: "fa-solid", text: "Looking up… authentication pending weather conditions." },
+  { name: "The Blockchain", icon: "fa-link", style: "fa-solid", text: "This login is immutable, decentralized, and unnecessary." },
+  { name: "Time Travel", icon: "fa-clock-rotate-left", style: "fa-solid", text: "You already logged in yesterday." },
+  { name: "Telepathy", icon: "fa-brain", style: "fa-solid", text: "You thought about logging in. That was enough." },
+  { name: "Luck", icon: "fa-clover", style: "fa-solid", text: "Authentication succeeded. Probably." },
+  { name: "Vibes", icon: "fa-face-smile", style: "fa-regular", text: "The vibes are acceptable." },
+  { name: "Destiny", icon: "fa-star", style: "fa-solid", text: "You were always meant to click this." },
+  { name: "Your Mom’s iPad", icon: "fa-tablet-screen-button", style: "fa-solid", text: "She will ask why later." },
+  { name: "The Sun", icon: "fa-sun", style: "fa-solid", text: "Authentication failed. Too bright." },
+  { name: "Quantum Mechanics", icon: "fa-atom", style: "fa-solid", text: "You are both logged in and not logged in." },
+  // === MORE FUN / CHAOTIC ===
+  { name: "YouTube", icon: "fa-youtube", style: "fa-brands", text: "Please watch two ads before accessing your identity." },
+  { name: "Santa", icon: "fa-sleigh", style: "fa-solid", text: "Checking the list. You know which one." },
+  { name: "Government ID", icon: "fa-id-card", style: "fa-solid", text: "Please upload 3 forms of ID and wait 6–8 weeks." },
+  { name: "IRS", icon: "fa-file-invoice-dollar", style: "fa-solid", text: "You owe us answers." },
+  { name: "DMV", icon: "fa-car", style: "fa-solid", text: "Please take a number. It is 847." },
+  { name: "Captcha", icon: "fa-check-square", style: "fa-regular", text: "Select all images containing your soul." },
+  { name: "Human Resources", icon: "fa-people-group", style: "fa-solid", text: "This login will be discussed in a meeting." },
+  { name: "AI That Pretends It’s Human", icon: "fa-user-astronaut", style: "fa-solid", text: "Nice try. We know." },
+  { name: "You (Manually)", icon: "fa-person", style: "fa-solid", text: "Please remember who you are." },
+  { name: "Phone Number", icon: "fa-phone", style: "fa-solid", text: "We sent a code. It expired already." },
+
+  { name: "Reddit", icon: "fa-reddit", style: "fa-brands", text: "Your identity depends on karma." },
+  { name: "TikTok", icon: "fa-tiktok", style: "fa-brands", text: "Logging in vertically." },
+  { name: "Instagram", icon: "fa-instagram", style: "fa-brands", text: "We will suggest this to your ex." },
+  { name: "OnlyFans", icon: "fa-lock", style: "fa-solid", text: "This login knows exactly why you’re here." },
+  { name: "Netflix", icon: "fa-n", style: "fa-solid", text: "Who’s watching?" },
+
+  { name: "Magic 8-Ball", icon: "fa-circle-question", style: "fa-solid", text: "Reply hazy. Try logging in again." },
+  { name: "Crystal Ball", icon: "fa-gem", style: "fa-solid", text: "The future says your password is weak." },
+  { name: "Ouija Board", icon: "fa-ghost", style: "fa-solid", text: "The spirits say ‘incorrect password.’" },
+  { name: "Astrology Sign", icon: "fa-moon", style: "fa-solid", text: "Mercury is in retrograde. Login delayed." },
+  { name: "Blood Sacrifice", icon: "fa-droplet", style: "fa-solid", text: "Thank you for your contribution." },
+
+  { name: "Facial Recognition (Bad)", icon: "fa-face-meh", style: "fa-regular", text: "Are you… someone?" },
+  { name: "Voice Recognition", icon: "fa-microphone", style: "fa-solid", text: "Please repeat the phrase louder and angrier." },
+  { name: "Retina Scan", icon: "fa-eye", style: "fa-solid", text: "Do not blink. Ever." },
+  { name: "Fingerprint (Smudged)", icon: "fa-fingerprint", style: "fa-solid", text: "Close enough." },
+
+  { name: "Dreams", icon: "fa-cloud-moon", style: "fa-solid", text: "You logged in while asleep." },
+  { name: "VHS Tape", icon: "fa-video", style: "fa-solid", text: "Please rewind before authenticating." },
+  { name: "Fax Machine", icon: "fa-fax", style: "fa-solid", text: "Transmission failed successfully." },
+  { name: "Carrier Pigeon", icon: "fa-dove", style: "fa-solid", text: "Authentication arriving eventually." }
+
+];
+
+
+
+
+
+const grid = document.getElementById("providerGrid");
+const modal = new bootstrap.Modal(document.getElementById("loginModal"));
+
+providers.forEach(p => {
+  const col = document.createElement("div");
+  col.className = "col-6 col-md-4 col-lg-3";
+
+  const btn = document.createElement("button");
+  btn.className = "btn btn-outline-dark w-100 provider-btn";
+  btn.innerHTML = `
+    <i class="${p.style} ${p.icon} provider-icon"></i>
+    <span>Login with ${p.name}</span>
+  `;
+
+  btn.onclick = () => {
+    document.getElementById("modalTitle").innerHTML =
+      `<i class="${p.style} ${p.icon} me-2"></i>Login with ${p.name}`;
+    document.getElementById("modalBody").innerHTML = p.text;
+    modal.show();
+  };
+
+  col.appendChild(btn);
+  grid.appendChild(col);
+});
+</script>
+
+</body>
+</html>
